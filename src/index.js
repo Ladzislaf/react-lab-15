@@ -13,8 +13,6 @@ import cucumberImageSrc from "./Images/cucumber.jpg";
 import tomatoImageSrc from "./Images/tomato.jpg";
 import carrotImageSrc from "./Images/carrot.jpg";
 
-// todo если в корзине продукт не выбран - кнопка next - disabled
-// todo компонент order form - изменить (сделать норм логику для выбранных продуктов)
 const defaultState = {
 	products: [
 		{
@@ -110,7 +108,7 @@ const defaultState = {
 		},
 	],
 	cart: [],
-	users: [],
+	users: [{email: 'admin', pass: 'admin'}],
 	currentUser: '',
 	currentPage: '',
 }
@@ -119,6 +117,11 @@ const reducer = (state = defaultState, action) => {
 	switch (action.type) {
 		case 'CHANGE_PRODS':
 			return {...state, products: action.payload}
+		case 'CHANGE_PROD_COUNT':
+			return {...state, products: state.products.map((pr) => {
+				if (pr.id === action.payload.id) return {...pr, count: action.payload.count}
+				return pr
+			})}
 		case 'ADD_PROD':
 			return {...state, cart: [...state.cart, action.payload]}
 		case 'REMOVE_PROD':
@@ -131,6 +134,18 @@ const reducer = (state = defaultState, action) => {
 			return {...state, currentUser: action.payload}
 		case 'SET_PAGE':
 			return {...state, currentPage: action.payload}
+		case 'CHANGE_CHECKED_PROD':
+			return {...state, cart: state.cart.map((pr) => {
+				if (pr.id === action.payload.id) return {...pr, checked: action.payload.checked}
+				return pr
+			})}
+		case 'CHANGE_SELECTED_PROD':
+			return {...state, cart: state.cart.map((pr) => {
+				if (pr.id === action.payload.id) return {...pr, selected: action.payload.selected}
+				return pr
+			})}
+		case 'CLEAR_CART':
+			return {...state, cart: []}
 		default: return state
 	}
 }

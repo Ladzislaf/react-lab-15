@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import '../App.css'
 import {useDispatch, useSelector} from "react-redux"
+import {Link} from "react-router-dom";
 
 export default function OrderForm() {
 	const dispatch = useDispatch()
@@ -91,7 +92,14 @@ export default function OrderForm() {
 
 	const confirm = () => {
 		alert('Success!')
-		document.location.reload()
+		dispatch({type: 'CLEAR_CART'})
+		dispatch({type: 'SET_PAGE', payload: '1'})
+
+		cart.forEach((pr) => {
+			if (pr.checked) {
+				dispatch({type: 'CHANGE_PROD_COUNT', payload: {id: pr.id, count: pr.count - pr.selected}})
+			}
+		})
 	}
 	
   	return (
@@ -99,7 +107,7 @@ export default function OrderForm() {
 			<progress value={page} max={3}/> <br/>
 			{page === 1 && <>
 				<p>Summary price: {sumPrice.toFixed(2)} $</p> <br/>
-				<input className={'btn'} type="button" value={'Next'} disabled={!currentUser} onClick={nextWindowHandler}/>
+				<input className={'btn'} type="button" value={'Next'} disabled={!currentUser || !checkedProdList.length} onClick={nextWindowHandler}/>
 				{cart.map((product) => {
 					return (
 						<div key={product.id} className={'catalogItem'}>
@@ -157,7 +165,7 @@ export default function OrderForm() {
 				<p>address: {address}</p>
 
 				<input className={'btn'} type="button" value={'Prev'} onClick={prevWindowHandler}/>
-				<input className={'btn'} type="button" value={'Confirm'} onClick={confirm}/>
+				<Link to={'/first'}><input className={'btn'} type="button" value={'Confirm'} onClick={confirm}/></Link>
 			</>}
 		</div>
   	)

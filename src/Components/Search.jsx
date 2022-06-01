@@ -2,8 +2,9 @@ import React, {useState} from 'react'
 import '../App.css'
 import {useSelector} from "react-redux";
 
-const Search = () => {
+const Search = ({toggleModal}) => {
     const productsList = useSelector(state => state.products)
+    const cart = useSelector(state => state.cart)
 
     const [searchType, setSearchType] = useState('accurate search')
     const [resultList, setResultList] = useState([])
@@ -27,6 +28,10 @@ const Search = () => {
         }
     }
 
+    const addToCart = (product) => {
+        toggleModal(product)
+    }
+
     return (
         <div className={'searchBlock'}>
             <select onChange={(e) => setSearchType(e.target.value)}>
@@ -38,15 +43,18 @@ const Search = () => {
 
             {resultList.map((product) => {
                 return (
-                    <div key={product.id} className={'searchItem'}>
+                    <div key={product.id} className={'catalogItem'}>
+                        {product.new && <p className={'new'}>NEW!</p>}
                         <h2>{product.name.toUpperCase()}</h2>
-                        <img src={product.image} alt="" style={{width: '100px'}}/>
+                        <img src={product.image} alt="" style={{width: '200px'}}/>
                         {product.discount ?
                             <div>Price: {(product.price * (1 - product.discount / 100)).toFixed(2)}$ <s>{product.price}$</s></div> :
                             <div>Price: {product.price}$</div>}
                         <div>{product.description}</div>
                         <div>Count: {product.count}</div>
+                        <div>Weight: {product.weight} g.</div>
                         {product.discount > 0 && <div className={'discount'}>-{product.discount}%</div>}
+                        <input disabled={(product.count < 1) || cart.includes(product)} className={'btn'} type="button" value={'Add to cart'} onClick={() => addToCart(product)}/>
                     </div>
                 )
             })}

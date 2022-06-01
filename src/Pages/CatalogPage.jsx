@@ -30,7 +30,7 @@ const CatalogPage = () => {
 
     return (
         <div style={{textAlign: 'center'}}>
-            <Search/>
+            <Search toggleModal={toggleModal}/>
             <Catalog toggleModal={toggleModal}/>
             {isModalOpen &&
                 ReactDOM.createPortal(
